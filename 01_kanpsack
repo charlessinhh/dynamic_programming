@@ -1,0 +1,65 @@
+#recursive code
+N = 3 #size of value array and weight array 
+W = 4  #max weight of bag
+values = [1,2,3] #values of items
+weight = [4,5,1] #weight of items
+
+#base case -> think of the smallest valid input ,, W == 0 or N == 0
+#base case + choice diagram
+
+def recKnapsack(weight, values, W, N):
+  if N == 0 or W == 0: #base case if no item or no bag weight present 
+    return 0
+  
+  if weight[N-1] <= W:  
+    #here we will have two choice, take weight or not in knapsack depends on max profit
+    return max( values[N-1] + recKnapsack(weight,values,W-weight[N-1],N-1), recKnapsack(weight, values, W, N-1))
+  else:
+    #if weight > W means we will not add it in our knapsack
+    return recKnapsack(weight, values, W, N-1)
+
+print(recKnapsack(weight, values, W, N))
+
+
+#memoization,,better than table, with recursion
+#in recursion, some argument in recknapsack is changing,, some is constant.
+#the values which are changing, create a matrix of that values only,,not for the constant one
+#matrix with row N+1 and column W+1,,both are changing in recursion
+
+# dp = [[-1 for x in range(W+1)] for x in range(N+1)]
+
+def memoKnapsack(weight, values, W, N):
+  dp = [[-1 for x in range(W+1)] for x in range(N+1)]
+  if N == 0 or W == 0: return 0
+  if dp[N][W] != -1: return dp[N][W] #if found in dp, return from here
+  if weight[N-1] <= W:
+    dp[N][W] = max( values[N-1] + memoKnapsack(weight,values,W-weight[N-1],N-1), memoKnapsack(weight, values, W, N-1))
+    return dp[N][W]
+  else:
+    dp[N][W] = memoKnapsack(weight, values, W, N-1)
+    return dp[N][W]
+  
+print(memoKnapsack(weight, values, W, N))
+
+
+#top-down approach will remove recursive call to avoid stack overflow
+#change recursive call into iterative function
+#base cond of recursive function chnages into top-down initialization, N == 0 or W == 0 return 0,, initialize zero in matrix.
+
+def topdownKnapsack(weight, values,W,N):
+  dp = [[0 for x in range(W+1)] for x in range(N+1)]
+  #create a iterative call
+  for i in range(0,N+1,1):   # N changs to i 
+    for j in range(0,W+1,1):  # W chnages to j 
+      if i == 0 or j == 0:  #initialize the base case 
+        dp[i][j] = 0        #fill it in dp 
+
+      elif weight[i-1] <= j:  #jahan jahan N hai usko i, W ko j
+        dp[i][j] = max(values[i-1]+dp[i-1][j-weight[i-1]] ,   dp[i-1][j])
+
+      else:
+        dp[i][j] = dp[i-1][j]
+
+  return dp[N][W]
+
+print(topdownKnapsack(weight,values,W,N))
