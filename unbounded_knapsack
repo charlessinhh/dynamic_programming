@@ -1,0 +1,23 @@
+#only diff from 01knapsack, is that we can have duplicate elements in it. so if we choose it one time we can choose it multiple times,, so dp[i-1] will change to dp[i] in weight[i-1]<=j
+N = 3 #size of value array and weight array 
+W = 4  #max weight of bag
+values = [1,2,3] #values of items
+weight = [4,5,1] 
+
+def unboundedKnapsack(weight, values,W,N):
+  dp = [[0 for x in range(W+1)] for x in range(N+1)]
+  #create a iterative call
+  for i in range(0,N+1,1):   # N changs to i 
+    for j in range(0,W+1,1):  # W chnages to j 
+      if i == 0 or j == 0:  #initialize the base case 
+        dp[i][j] = 0        #fill it in dp 
+
+      elif weight[i-1] <= j:  #jahan jahan N hai usko i, W ko j
+        dp[i][j] = max(values[i-1]+dp[i][j-weight[i-1]] , dp[i-1][j]) #chnges here dp[i-1] will change to dp[i] because we cam take it multiple times so array will be same
+
+      else:
+        dp[i][j] = dp[i-1][j]
+
+  return dp[N][W]
+
+print(unboundedKnapsack(weight,values,W,N))
